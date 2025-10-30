@@ -103,7 +103,7 @@ export default function App() {
   return (
     <div className="max-w-4xl mx-auto p-4 md:p-6 space-y-4">
       <header>
-        <h1 className="text-xl font-bold">Foto 2v1 — Grid Stitcher</h1>
+        <h1 className="text-xl font-bold">GridPhoto — Grid Stitcher</h1>
         <p className="text-slate-300">Drag & drop up to ~50 photos. Choose rows & columns, set a print size in cm with DPI, and we’ll build ready-to-print grids completely in your browser.</p>
       </header>
 

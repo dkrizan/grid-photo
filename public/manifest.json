@@ -1,6 +1,6 @@
 {
-  "name": "Foto 2v1",
-  "short_name": "Foto2v1",
+  "name": "GridPhoto",
+  "short_name": "GridPhoto",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0b0c10",
