@@ -4,6 +4,13 @@ import { composeGrid, createGridCanvas, fileToImage, ComposeOptions } from './ut
 
 type ImgFile = { file: File, img?: HTMLImageElement }
 
+function describeError(err: unknown) {
+  if (err instanceof Error && err.message) return err.message
+  if (typeof err === 'string') return err
+  if (err && typeof err === 'object' && 'message' in err) return String((err as { message?: unknown }).message)
+  return 'Unexpected error while processing images.'
+}
+
 export default function App() {
   const [files, setFiles] = useState<ImgFile[]>([])
   const [opts, setOpts] = useState<ComposeOptions>({
@@ -14,6 +21,9 @@ export default function App() {
     quality: 0.92,
     rows: 1,
     cols: 2,
+    widthCm: 15,
+    heightCm: 10,
+    dpi: 300,
   })
   const [busy, setBusy] = useState(false)
 
@@ -38,6 +48,9 @@ export default function App() {
   const firstGroup = useMemo<ImgFile[] | undefined>(() => (
     files.length >= groupSize ? files.slice(0, groupSize) : undefined
   ), [files, groupSize])
+
+  const outputWidthPx = useMemo(() => Math.round(Math.max(8, (opts.widthCm / 2.54) * opts.dpi)), [opts.widthCm, opts.dpi])
+  const outputHeightPx = useMemo(() => Math.round(Math.max(8, (opts.heightCm / 2.54) * opts.dpi)), [opts.heightCm, opts.dpi])
 
   async function ensureImages(frames: ImgFile[]) {
     await Promise.all(frames.map(async f => { if (!f.img) f.img = await fileToImage(f.file) }))
@@ -64,7 +77,13 @@ export default function App() {
       await ensureImages(groups.flat())
       let idx = 1
       for (const group of groups) {
-        const blob = await composeGrid(group.map(item => item.img!), opts)
+        let blob: Blob
+        try {
+          blob = await composeGrid(group.map(item => item.img!), opts)
+        } catch (err) {
+          alert(describeError(err))
+          return
+        }
         const ext = opts.output === 'image/png' ? 'png' : 'jpg'
         const name = `grid-${String(idx).padStart(2,'0')}.${ext}`
         zip.file(name, blob)
@@ -85,7 +104,7 @@ export default function App() {
     <div className="max-w-4xl mx-auto p-4 md:p-6 space-y-4">
       <header>
         <h1 className="text-xl font-bold">Foto 2v1 — Grid Stitcher</h1>
-        <p className="text-slate-300">Drag & drop up to ~50 photos. Choose rows & columns to create evenly spaced photo grids. Everything runs locally in your browser.</p>
+        <p className="text-slate-300">Drag & drop up to ~50 photos. Choose rows & columns, set a print size in cm with DPI, and we’ll build ready-to-print grids completely in your browser.</p>
       </header>
 
       <section className="rounded-xl border border-slate-700 bg-slate-800/60 p-4 space-y-3">
@@ -137,6 +156,56 @@ export default function App() {
               </div>
               <div className="text-xs text-slate-400 mt-1">{groupSize} photo{groupSize === 1 ? '' : 's'} per grid</div>
             </div>
+            <div>
+              <label className="text-sm text-slate-300">Output size</label>
+              <div className="mt-1 grid grid-cols-2 gap-2 text-sm">
+                <label className="flex items-center gap-2">
+                  <span className="w-16">Width</span>
+                  <input
+                    type="number"
+                    min={2}
+                    step={0.1}
+                    value={opts.widthCm}
+                    onChange={(e)=>{
+                      const val = parseFloat(e.target.value)
+                      setOpts({...opts, widthCm: Number.isFinite(val) ? Math.max(1, val) : opts.widthCm})
+                    }}
+                    className="w-full rounded border border-slate-600 bg-slate-800 px-2 py-1 text-sm"
+                  />
+                  <span className="text-xs text-slate-500">cm</span>
+                </label>
+                <label className="flex items-center gap-2">
+                  <span className="w-16">Height</span>
+                  <input
+                    type="number"
+                    min={2}
+                    step={0.1}
+                    value={opts.heightCm}
+                    onChange={(e)=>{
+                      const val = parseFloat(e.target.value)
+                      setOpts({...opts, heightCm: Number.isFinite(val) ? Math.max(1, val) : opts.heightCm})
+                    }}
+                    className="w-full rounded border border-slate-600 bg-slate-800 px-2 py-1 text-sm"
+                  />
+                  <span className="text-xs text-slate-500">cm</span>
+                </label>
+              </div>
+              <div className="mt-2 flex items-center gap-2 text-sm">
+                <span className="w-16">DPI</span>
+                <input
+                  type="number"
+                  min={72}
+                  max={1200}
+                  value={opts.dpi}
+                  onChange={(e)=>{
+                    const val = parseInt(e.target.value, 10)
+                    setOpts({...opts, dpi: Number.isFinite(val) ? Math.min(1200, Math.max(72, val)) : opts.dpi})
+                  }}
+                  className="w-24 rounded border border-slate-600 bg-slate-800 px-2 py-1 text-sm"
+                />
+                <span className="text-xs text-slate-500">≈ {outputWidthPx}×{outputHeightPx} px</span>
+              </div>
+            </div>
             <div className="flex items-center gap-2">
               <input id="rot" type="checkbox" className="scale-125" checked={opts.rotate90} onChange={(e)=>setOpts({...opts, rotate90: e.target.checked})} />
               <label htmlFor="rot">Rotate sources 90°</label>
@@ -164,7 +233,7 @@ export default function App() {
           </div>
 
           <div className="md:col-span-2">
-            <div className="text-sm text-slate-300 font-semibold mb-2">Preview (first grid)</div>
+            <div className="text-sm text-slate-300 font-semibold mb-2">Preview (first grid) — {outputWidthPx}×{outputHeightPx} px</div>
             <PreviewCanvas group={firstGroup} opts={opts} />
           </div>
         </div>
@@ -237,7 +306,7 @@ function PreviewCanvas({ group, opts }: { group?: ImgFile[]; opts: ComposeOption
     return () => {
       cancelled = true
     }
-  }, [group, opts.cols, opts.gapPx, opts.rotate90, opts.rows, opts.separatorColor])
+  }, [group, opts.cols, opts.dpi, opts.gapPx, opts.heightCm, opts.rotate90, opts.rows, opts.separatorColor, opts.widthCm])
 
   return <canvas ref={canvasRef} className="w-full h-auto rounded border border-slate-700 bg-black/50" />
 }

@@ -6,6 +6,9 @@ export type ComposeOptions = {
   quality: number;
   rows: number;
   cols: number;
+  widthCm: number;
+  heightCm: number;
+  dpi: number;
 };
 
 function isHeicFile(file: File) {
@@ -57,22 +60,25 @@ function drawImageRotated(ctx: CanvasRenderingContext2D, img: CanvasImageSource,
   ctx.restore();
 }
 
+function clampPositive(value: number, fallback: number) {
+  return Number.isFinite(value) && value > 0 ? value : fallback;
+}
+
 export function createGridCanvas(
   images: HTMLImageElement[],
   opts: ComposeOptions
 ): HTMLCanvasElement {
-  const { rotate90, gapPx, separatorColor, rows, cols } = opts;
+  const { rotate90, gapPx, separatorColor, rows, cols, widthCm, heightCm, dpi } = opts;
   const expected = rows * cols;
   if (images.length !== expected) {
     throw new Error(`composeGrid requires exactly ${expected} images, received ${images.length}.`);
   }
 
-  const dimsList = images.map((img) => dims(img, rotate90));
-  const cellW = Math.min(...dimsList.map((d) => d.w));
-  const cellH = Math.min(...dimsList.map((d) => d.h));
-
-  const outW = cols * cellW + Math.max(0, cols - 1) * gapPx;
-  const outH = rows * cellH + Math.max(0, rows - 1) * gapPx;
+  const safeWidthCm = clampPositive(widthCm, 15);
+  const safeHeightCm = clampPositive(heightCm, 10);
+  const safeDpi = clampPositive(dpi, 300);
+  const outW = Math.max(8, Math.round((safeWidthCm / 2.54) * safeDpi));
+  const outH = Math.max(8, Math.round((safeHeightCm / 2.54) * safeDpi));
 
   const canvas = document.createElement('canvas');
   canvas.width = outW;
@@ -82,11 +88,22 @@ export function createGridCanvas(
   ctx.fillStyle = separatorColor;
   ctx.fillRect(0, 0, outW, outH);
 
+  const dimsList = images.map((img) => dims(img, rotate90));
+  const totalGapX = Math.max(0, cols - 1) * gapPx;
+  const totalGapY = Math.max(0, rows - 1) * gapPx;
+  const usableWidth = outW - totalGapX;
+  const usableHeight = outH - totalGapY;
+  if (usableWidth <= 0 || usableHeight <= 0) {
+    throw new Error('Output size is too small for the selected layout. Increase the dimensions or reduce the gap.');
+  }
+  const cellW = usableWidth / cols;
+  const cellH = usableHeight / rows;
+
   images.forEach((img, idx) => {
     const d = dimsList[idx];
     const scale = Math.min(cellW / d.w, cellH / d.h);
-    const targetW = Math.round(d.w * scale);
-    const targetH = Math.round(d.h * scale);
+    const targetW = Math.max(1, Math.round(d.w * scale));
+    const targetH = Math.max(1, Math.round(d.h * scale));
     const row = Math.floor(idx / cols);
     const col = idx % cols;
     const baseX = col * (cellW + gapPx);
