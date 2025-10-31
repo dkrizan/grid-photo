@@ -9,6 +9,7 @@ export type ComposeOptions = {
   widthCm: number;
   heightCm: number;
   dpi: number;
+  cropToFill?: boolean;
 };
 
 function isHeicFile(file: File) {
@@ -68,7 +69,7 @@ export function createGridCanvas(
   images: HTMLImageElement[],
   opts: ComposeOptions
 ): HTMLCanvasElement {
-  const { rotate90, gapPx, separatorColor, rows, cols, widthCm, heightCm, dpi } = opts;
+  const { rotate90, gapPx, separatorColor, rows, cols, widthCm, heightCm, dpi, cropToFill } = opts;
   const expected = rows * cols;
   if (images.length !== expected) {
     throw new Error(`composeGrid requires exactly ${expected} images, received ${images.length}.`);
@@ -99,18 +100,38 @@ export function createGridCanvas(
   const cellW = usableWidth / cols;
   const cellH = usableHeight / rows;
 
+  const shouldCrop = Boolean(cropToFill);
+
   images.forEach((img, idx) => {
     const d = dimsList[idx];
-    const scale = Math.min(cellW / d.w, cellH / d.h);
+    const scale = shouldCrop ? Math.max(cellW / d.w, cellH / d.h) : Math.min(cellW / d.w, cellH / d.h);
     const targetW = Math.max(1, Math.round(d.w * scale));
     const targetH = Math.max(1, Math.round(d.h * scale));
     const row = Math.floor(idx / cols);
     const col = idx % cols;
     const baseX = col * (cellW + gapPx);
     const baseY = row * (cellH + gapPx);
-    const dx = Math.round(baseX + (cellW - targetW) / 2);
-    const dy = Math.round(baseY + (cellH - targetH) / 2);
+    const clipLeft = Math.round(baseX);
+    const clipTop = Math.round(baseY);
+    const clipRight = Math.round(baseX + cellW);
+    const clipBottom = Math.round(baseY + cellH);
+    const clipWidth = Math.max(1, clipRight - clipLeft);
+    const clipHeight = Math.max(1, clipBottom - clipTop);
+
+    if (shouldCrop) {
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(clipLeft, clipTop, clipWidth, clipHeight);
+      ctx.clip();
+    }
+
+    const dx = Math.round(clipLeft + (clipWidth - targetW) / 2);
+    const dy = Math.round(clipTop + (clipHeight - targetH) / 2);
     drawImageRotated(ctx, img, rotate90, dx, dy, targetW, targetH);
+
+    if (shouldCrop) {
+      ctx.restore();
+    }
   });
 
   return canvas;
