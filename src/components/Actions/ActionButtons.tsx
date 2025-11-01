@@ -26,7 +26,11 @@ export function ActionButtons({
         className="gap-2 cursor-pointer bg-violet-600 text-white hover:bg-violet-500 disabled:cursor-not-allowed disabled:bg-slate-800 disabled:text-slate-400"
       >
         <DownloadIcon />
-        {busy ? 'Processing…' : singleFileResult ? 'Download' : 'Download all (zip)'}
+        {busy
+          ? 'Processing…'
+          : singleFileResult
+            ? 'Download'
+            : 'Download all (zip)'}
       </Button>
       <Button
         variant="surface"

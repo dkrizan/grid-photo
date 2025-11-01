@@ -9,16 +9,19 @@ export function AboutPage() {
         </Heading>
         <div className="space-y-3 text-slate-300">
           <Text as="p" size="2">
-            GridPhoto is a lightweight in-browser tool for composing photo grids. Images never leave your device—every
-            conversion and export runs locally so you retain full control over your files.
+            GridPhoto is a lightweight in-browser tool for composing photo
+            grids. Images never leave your device—every conversion and export
+            runs locally so you retain full control over your files.
           </Text>
           <Text as="p" size="2">
-            Use the Builder to tweak layout, spacing, orientation, and export quality. Support for HEIC/HEIF files is
-            baked in, and the preview updates instantly as you refine settings.
+            Use the Builder to tweak layout, spacing, orientation, and export
+            quality. Support for HEIC/HEIF files is baked in, and the preview
+            updates instantly as you refine settings.
           </Text>
           <Text as="p" size="2">
-            Future updates will focus on richer presets, bulk editing, and improved accessibility. Have feedback?
-            Contributions and ideas are welcome.
+            Future updates will focus on richer presets, bulk editing, and
+            improved accessibility. Have feedback? Contributions and ideas are
+            welcome.
           </Text>
         </div>
       </Card>

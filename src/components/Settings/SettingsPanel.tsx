@@ -3,7 +3,10 @@ import { Flex } from '@radix-ui/themes';
 import { ComposeOptions, ImgFile, NumericInputMap } from '../../types';
 import { ActionButtons } from '../Actions';
 import { PreviewPanel } from '../Preview';
-import { CompositionSettings, NumericFieldHandlers } from './CompositionSettings';
+import {
+  CompositionSettings,
+  NumericFieldHandlers,
+} from './CompositionSettings';
 
 interface SettingsPanelProps {
   options: ComposeOptions;

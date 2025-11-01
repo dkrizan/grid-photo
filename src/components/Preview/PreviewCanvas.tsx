@@ -26,7 +26,12 @@ export function PreviewCanvas({ group, options, ready }: PreviewCanvasProps) {
       const primeCanvas = () => {
         canvas.width = 480;
         canvas.height = 360;
-        const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+        const gradient = ctx.createLinearGradient(
+          0,
+          0,
+          canvas.width,
+          canvas.height
+        );
         gradient.addColorStop(0, '#0f172a');
         gradient.addColorStop(1, '#020617');
         ctx.fillStyle = gradient;
@@ -47,14 +52,14 @@ export function PreviewCanvas({ group, options, ready }: PreviewCanvasProps) {
       await Promise.all(
         group.map(async (item) => {
           if (!item.img) item.img = await fileToImage(item.file);
-        }),
+        })
       );
 
       if (cancelled) return;
 
       const gridCanvas = createGridCanvas(
         group.map((item) => item.img!),
-        options,
+        options
       );
       if (cancelled) return;
 

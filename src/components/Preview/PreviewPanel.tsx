@@ -11,7 +11,13 @@ interface PreviewPanelProps {
   outputHeightPx: number;
 }
 
-export function PreviewPanel({ group, options, ready, outputWidthPx, outputHeightPx }: PreviewPanelProps) {
+export function PreviewPanel({
+  group,
+  options,
+  ready,
+  outputWidthPx,
+  outputHeightPx,
+}: PreviewPanelProps) {
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">

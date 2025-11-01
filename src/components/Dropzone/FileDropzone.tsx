@@ -8,7 +8,11 @@ interface FileDropzoneProps {
   onFilesSelected: (files: FileList | File[]) => void;
 }
 
-export function FileDropzone({ fileCount, groupSize, onFilesSelected }: FileDropzoneProps) {
+export function FileDropzone({
+  fileCount,
+  groupSize,
+  onFilesSelected,
+}: FileDropzoneProps) {
   const inputId = useId();
 
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
@@ -32,11 +36,21 @@ export function FileDropzone({ fileCount, groupSize, onFilesSelected }: FileDrop
     <div
       onDrop={handleDrop}
       onDragOver={handleDragOver}
-      className="relative flex min-h-[180px] flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-slate-700/80 bg-slate-900/70 p-6 text-center transition hover:border-violet-400/70 hover:bg-slate-900"
+      className="relative flex min-h-[180px] flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-slate-700/80 bg-slate-900/70 p-6 text-center transition hover:border-violet-400/70 hover:bg-slate-900 cursor-pointer"
     >
-      <input id={inputId} type="file" accept="image/*" multiple onChange={handleBrowse} className="hidden" />
+      <input
+        id={inputId}
+        type="file"
+        accept="image/*"
+        multiple
+        onChange={handleBrowse}
+        className="hidden"
+      />
       <Button variant="soft" color="violet" asChild>
-        <label htmlFor={inputId} className="flex cursor-pointer items-center gap-2 text-base font-medium">
+        <label
+          htmlFor={inputId}
+          className="flex items-center gap-2 text-base font-medium"
+        >
           <UploadIcon />
           Browse images
         </label>

@@ -33,7 +33,11 @@ export function UploadPanel({
 }: UploadPanelProps) {
   return (
     <Flex direction="column" gap="4">
-      <FileDropzone fileCount={files.length} groupSize={groupSize} onFilesSelected={onFilesSelected} />
+      <FileDropzone
+        fileCount={files.length}
+        groupSize={groupSize}
+        onFilesSelected={onFilesSelected}
+      />
 
       <div className="flex flex-col gap-2">
         <NoticePanel
@@ -52,7 +56,12 @@ export function UploadPanel({
             Selected photos
           </Heading>
           {files.length > 0 && (
-            <Button variant="ghost" color="gray" onClick={onClearAll} className="gap-2 cursor-pointer">
+            <Button
+              variant="ghost"
+              color="gray"
+              onClick={onClearAll}
+              className="gap-2 cursor-pointer"
+            >
               <TrashIcon />
               Clear all
             </Button>

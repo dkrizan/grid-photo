@@ -47,7 +47,8 @@ export function NoticePanel({
           <ImageIcon />
         </Callout.Icon>
         <Callout.Text>
-          Add {previewShortfall} more photo{previewShortfall === 1 ? '' : 's'} to render the first grid preview.
+          Add {previewShortfall} more photo{previewShortfall === 1 ? '' : 's'}{' '}
+          to render the first grid preview.
         </Callout.Text>
       </Callout.Root>
     );
@@ -60,7 +61,8 @@ export function NoticePanel({
           <ImageIcon />
         </Callout.Icon>
         <Callout.Text>
-          Add {downloadShortfall} more photo{downloadShortfall === 1 ? '' : 's'} to complete the next export batch.
+          Add {downloadShortfall} more photo{downloadShortfall === 1 ? '' : 's'}{' '}
+          to complete the next export batch.
         </Callout.Text>
       </Callout.Root>
     );

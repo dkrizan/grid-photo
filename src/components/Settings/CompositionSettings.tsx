@@ -6,7 +6,9 @@ import { ComposeOptions, NumericInputMap, NumericOptionKey } from '../../types';
 export interface NumericFieldHandlers {
   updateInputValue: (key: NumericOptionKey, value: string) => void;
   commitNumericValue: (key: NumericOptionKey) => void;
-  handleNumericKeyDown: (key: NumericOptionKey) => (event: ReactKeyboardEvent<HTMLInputElement>) => void;
+  handleNumericKeyDown: (
+    key: NumericOptionKey
+  ) => (event: ReactKeyboardEvent<HTMLInputElement>) => void;
 }
 
 interface CompositionSettingsProps {
@@ -25,7 +27,8 @@ const TAB_TRIGGER_CLASS =
   'data-[state=active]:hover:bg-violet-600 data-[state=active]:hover:text-white cursor-pointer ' +
   'before:bg-transparent hover:*:bg-transparent data-[state=active]:hover:*:bg-transparent';
 
-const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
+const clamp = (value: number, min: number, max: number) =>
+  Math.min(Math.max(value, min), max);
 
 const filterIntegerInput = (value: string) => value.replace(/[^\d]/g, '');
 
@@ -54,7 +57,8 @@ export function CompositionSettings({
   outputHeightPx,
   onOptionsChange,
 }: CompositionSettingsProps) {
-  const { updateInputValue, commitNumericValue, handleNumericKeyDown } = numericHelpers;
+  const { updateInputValue, commitNumericValue, handleNumericKeyDown } =
+    numericHelpers;
 
   const handleCheckboxChange =
     (key: 'rotate90' | 'cropToFill') =>
@@ -64,7 +68,9 @@ export function CompositionSettings({
 
   const handleGapChange = (event: ChangeEvent<HTMLInputElement>) => {
     const parsed = Number.parseInt(event.target.value, 10);
-    const next = Number.isFinite(parsed) ? clamp(parsed, 0, 120) : options.gapPx;
+    const next = Number.isFinite(parsed)
+      ? clamp(parsed, 0, 120)
+      : options.gapPx;
     if (next !== options.gapPx) {
       onOptionsChange({ gapPx: next });
     }
@@ -110,24 +116,38 @@ export function CompositionSettings({
         <Tabs.Content value="layout" className="space-y-4">
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
             <label className="flex flex-col gap-2 rounded-xl border border-slate-800/70 bg-slate-900/60 p-4 text-sm text-slate-200">
-              <span className="text-xs uppercase tracking-wide text-slate-400">Rows</span>
+              <span className="text-xs uppercase tracking-wide text-slate-400">
+                Rows
+              </span>
               <input
                 type="text"
                 inputMode="numeric"
                 value={inputValues.rows}
-                onChange={(event) => updateInputValue('rows', filterIntegerInput(event.target.value))}
+                onChange={(event) =>
+                  updateInputValue(
+                    'rows',
+                    filterIntegerInput(event.target.value)
+                  )
+                }
                 onBlur={() => commitNumericValue('rows')}
                 onKeyDown={handleNumericKeyDown('rows')}
                 className="rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-base text-slate-100 focus:border-violet-500 focus:outline-none"
               />
             </label>
             <label className="flex flex-col gap-2 rounded-xl border border-slate-800/70 bg-slate-900/60 p-4 text-sm text-slate-200">
-              <span className="text-xs uppercase tracking-wide text-slate-400">Columns</span>
+              <span className="text-xs uppercase tracking-wide text-slate-400">
+                Columns
+              </span>
               <input
                 type="text"
                 inputMode="numeric"
                 value={inputValues.cols}
-                onChange={(event) => updateInputValue('cols', filterIntegerInput(event.target.value))}
+                onChange={(event) =>
+                  updateInputValue(
+                    'cols',
+                    filterIntegerInput(event.target.value)
+                  )
+                }
                 onBlur={() => commitNumericValue('cols')}
                 onKeyDown={handleNumericKeyDown('cols')}
                 className="rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-base text-slate-100 focus:border-violet-500 focus:outline-none"
@@ -182,7 +202,10 @@ export function CompositionSettings({
               </div>
 
               <div className="flex items-center gap-3">
-                <Text size="1" className="uppercase tracking-wide text-slate-400">
+                <Text
+                  size="1"
+                  className="uppercase tracking-wide text-slate-400"
+                >
                   Color
                 </Text>
                 <input
@@ -199,13 +222,20 @@ export function CompositionSettings({
         <Tabs.Content value="dimensions" className="space-y-4">
           <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
             <label className="flex flex-col gap-2 rounded-xl border border-slate-800/70 bg-slate-900/60 p-4 text-sm text-slate-200">
-              <span className="text-xs uppercase tracking-wide text-slate-400">Width</span>
+              <span className="text-xs uppercase tracking-wide text-slate-400">
+                Width
+              </span>
               <div className="flex items-center gap-2">
                 <input
                   type="text"
                   inputMode="decimal"
                   value={inputValues.widthCm}
-                  onChange={(event) => updateInputValue('widthCm', filterDecimalInput(event.target.value))}
+                  onChange={(event) =>
+                    updateInputValue(
+                      'widthCm',
+                      filterDecimalInput(event.target.value)
+                    )
+                  }
                   onBlur={() => commitNumericValue('widthCm')}
                   onKeyDown={handleNumericKeyDown('widthCm')}
                   className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-base text-slate-100 focus:border-violet-500 focus:outline-none"
@@ -215,13 +245,20 @@ export function CompositionSettings({
             </label>
 
             <label className="flex flex-col gap-2 rounded-xl border border-slate-800/70 bg-slate-900/60 p-4 text-sm text-slate-200">
-              <span className="text-xs uppercase tracking-wide text-slate-400">Height</span>
+              <span className="text-xs uppercase tracking-wide text-slate-400">
+                Height
+              </span>
               <div className="flex items-center gap-2">
                 <input
                   type="text"
                   inputMode="decimal"
                   value={inputValues.heightCm}
-                  onChange={(event) => updateInputValue('heightCm', filterDecimalInput(event.target.value))}
+                  onChange={(event) =>
+                    updateInputValue(
+                      'heightCm',
+                      filterDecimalInput(event.target.value)
+                    )
+                  }
                   onBlur={() => commitNumericValue('heightCm')}
                   onKeyDown={handleNumericKeyDown('heightCm')}
                   className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-base text-slate-100 focus:border-violet-500 focus:outline-none"
@@ -231,13 +268,20 @@ export function CompositionSettings({
             </label>
 
             <label className="flex flex-col gap-2 rounded-xl border border-slate-800/70 bg-slate-900/60 p-4 text-sm text-slate-200">
-              <span className="text-xs uppercase tracking-wide text-slate-400">DPI</span>
+              <span className="text-xs uppercase tracking-wide text-slate-400">
+                DPI
+              </span>
               <div className="flex items-center gap-2">
                 <input
                   type="text"
                   inputMode="numeric"
                   value={inputValues.dpi}
-                  onChange={(event) => updateInputValue('dpi', filterIntegerInput(event.target.value))}
+                  onChange={(event) =>
+                    updateInputValue(
+                      'dpi',
+                      filterIntegerInput(event.target.value)
+                    )
+                  }
                   onBlur={() => commitNumericValue('dpi')}
                   onKeyDown={handleNumericKeyDown('dpi')}
                   className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-base text-slate-100 focus:border-violet-500 focus:outline-none"

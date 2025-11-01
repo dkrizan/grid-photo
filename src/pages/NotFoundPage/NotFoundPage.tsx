@@ -11,7 +11,10 @@ export function NotFoundPage() {
         <Text as="p" size="2" className="mb-4 text-slate-300">
           We couldn&apos;t find the page you were looking for.
         </Text>
-        <Link to="/" className="text-violet-400 transition hover:text-violet-300">
+        <Link
+          to="/"
+          className="text-violet-400 transition hover:text-violet-300"
+        >
           Go back to the builder
         </Link>
       </Card>
