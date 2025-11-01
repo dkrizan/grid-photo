@@ -48,7 +48,7 @@ function dims(img: {width:number; height:number}, rotate: boolean) {
 
 function drawImageRotated(ctx: CanvasRenderingContext2D, img: CanvasImageSource, rotate: boolean, dx: number, dy: number, dw: number, dh: number) {
   if (!rotate) {
-    // @ts-ignore
+    //@ts-expect-error img.width, img.height
     ctx.drawImage(img, 0, 0, img.width, img.height, dx, dy, dw, dh);
     return;
   }
@@ -56,7 +56,7 @@ function drawImageRotated(ctx: CanvasRenderingContext2D, img: CanvasImageSource,
   ctx.translate(dx, dy);
   ctx.translate(0, dh);
   ctx.rotate(-Math.PI/2);
-  // @ts-ignore
+  //@ts-expect-error img.width, img.height
   ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, dh, dw);
   ctx.restore();
 }
