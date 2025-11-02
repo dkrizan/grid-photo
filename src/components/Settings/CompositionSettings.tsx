@@ -95,7 +95,7 @@ export function CompositionSettings({
   return (
     <div className="space-y-4">
       <Heading as="h2" size="3" className="text-slate-200">
-        Composition settings
+        Composition &amp; layout settings
       </Heading>
 
       <Tabs.Root defaultValue="layout" className="w-full">
