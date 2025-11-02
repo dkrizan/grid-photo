@@ -1,7 +1,6 @@
 export type OutputFormat = 'image/jpeg' | 'image/png';
 
 export interface ComposeOptions {
-  rotate90: boolean;
   gapPx: number;
   separatorColor: string;
   output: OutputFormat;

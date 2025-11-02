@@ -60,11 +60,9 @@ export function CompositionSettings({
   const { updateInputValue, commitNumericValue, handleNumericKeyDown } =
     numericHelpers;
 
-  const handleCheckboxChange =
-    (key: 'rotate90' | 'cropToFill') =>
-    (event: ChangeEvent<HTMLInputElement>) => {
-      onOptionsChange({ [key]: event.target.checked });
-    };
+  const handleCropChange = (event: ChangeEvent<HTMLInputElement>) => {
+    onOptionsChange({ cropToFill: event.target.checked });
+  };
 
   const handleGapChange = (event: ChangeEvent<HTMLInputElement>) => {
     const parsed = Number.parseInt(event.target.value, 10);
@@ -161,22 +159,11 @@ export function CompositionSettings({
 
           <label className="flex items-center gap-3 rounded-xl border border-slate-800/70 bg-slate-900/60 p-4 text-sm text-slate-200">
             <input
-              id="rotate"
-              type="checkbox"
-              className="h-4 w-4 rounded border border-slate-600 bg-slate-950 text-violet-500 focus:ring-violet-500"
-              checked={options.rotate90}
-              onChange={handleCheckboxChange('rotate90')}
-            />
-            <span>Rotate source photos 90°</span>
-          </label>
-
-          <label className="flex items-center gap-3 rounded-xl border border-slate-800/70 bg-slate-900/60 p-4 text-sm text-slate-200">
-            <input
               id="crop"
               type="checkbox"
               className="h-4 w-4 rounded border border-slate-600 bg-slate-950 text-violet-500 focus:ring-violet-500"
               checked={Boolean(options.cropToFill)}
-              onChange={handleCheckboxChange('cropToFill')}
+              onChange={handleCropChange}
             />
             <span>Fill entire cell (crop photos)</span>
           </label>

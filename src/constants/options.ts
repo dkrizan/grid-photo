@@ -1,7 +1,6 @@
 import { ComposeOptions, NumericOptionKey } from '../types';
 
 export const DEFAULT_OPTIONS: ComposeOptions = {
-  rotate90: false,
   gapPx: 8,
   separatorColor: '#ffffff',
   output: 'image/jpeg',

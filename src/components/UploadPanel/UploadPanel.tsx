@@ -16,6 +16,7 @@ interface UploadPanelProps {
   downloadShortfall: number;
   onFilesSelected: (files: FileList | File[]) => void;
   onRemoveFile: (id: string) => void;
+  onRotateFile: (id: string) => void;
   onClearAll: () => void;
 }
 
@@ -29,6 +30,7 @@ export function UploadPanel({
   downloadShortfall,
   onFilesSelected,
   onRemoveFile,
+  onRotateFile,
   onClearAll,
 }: UploadPanelProps) {
   return (
@@ -68,7 +70,7 @@ export function UploadPanel({
           )}
         </Flex>
 
-        <FileGrid files={files} onRemove={onRemoveFile} />
+        <FileGrid files={files} onRemove={onRemoveFile} onRotate={onRotateFile} />
       </div>
     </Flex>
   );

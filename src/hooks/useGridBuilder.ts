@@ -14,15 +14,20 @@ import { useGridOptions } from './useGridOptions';
 import { ImgFile, Notice } from '../types';
 import { ComposeOptions } from '../types';
 
-export function useGridBuilder(defaultOptions: ComposeOptions = DEFAULT_OPTIONS) {
-  const { options, inputValues, numericHelpers, updateOptions } = useGridOptions(defaultOptions);
+export function useGridBuilder(
+  defaultOptions: ComposeOptions = DEFAULT_OPTIONS
+) {
+  const { options, inputValues, numericHelpers, updateOptions } =
+    useGridOptions(defaultOptions);
   const [files, setFiles] = useState<ImgFile[]>([]);
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState<Notice | null>(null);
   const filesRef = useRef<ImgFile[]>([]);
 
   const addFiles = useCallback((list: FileList | File[]) => {
-    const imgs = Array.from(list).filter((file) => file.type.startsWith('image/'));
+    const imgs = Array.from(list).filter((file) =>
+      file.type.startsWith('image/')
+    );
     if (!imgs.length) return;
     setFiles((prev) => [
       ...prev,
@@ -30,6 +35,7 @@ export function useGridBuilder(defaultOptions: ComposeOptions = DEFAULT_OPTIONS)
         id: `${file.name}-${file.lastModified}-${Math.random().toString(36).slice(2, 8)}`,
         file,
         previewUrl: createPreviewUrl(file),
+        rotationQuarterTurns: 0,
       })),
     ]);
     setNotice(null);
@@ -50,6 +56,19 @@ export function useGridBuilder(defaultOptions: ComposeOptions = DEFAULT_OPTIONS)
     setNotice(null);
   }, [files]);
 
+  const cycleFileRotation = useCallback((id: string) => {
+    setFiles((prev) =>
+      prev.map((item) =>
+        item.id === id
+          ? {
+              ...item,
+              rotationQuarterTurns: (item.rotationQuarterTurns + 1) % 4,
+            }
+          : item
+      )
+    );
+  }, []);
+
   useEffect(() => {
     filesRef.current = files;
   }, [files]);
@@ -60,25 +79,33 @@ export function useGridBuilder(defaultOptions: ComposeOptions = DEFAULT_OPTIONS)
     };
   }, []);
 
-  const groupSize = useMemo(() => Math.max(1, options.rows * options.cols), [options.cols, options.rows]);
-  const remainder = useMemo(() => files.length % groupSize, [files.length, groupSize]);
+  const groupSize = useMemo(
+    () => Math.max(1, options.rows * options.cols),
+    [options.cols, options.rows]
+  );
+  const remainder = useMemo(
+    () => files.length % groupSize,
+    [files.length, groupSize]
+  );
   const firstGroup = useMemo<ImgFile[] | undefined>(
     () => (files.length >= groupSize ? files.slice(0, groupSize) : undefined),
-    [files, groupSize],
+    [files, groupSize]
   );
 
   const outputWidthPx = useMemo(
     () => Math.round(Math.max(8, (options.widthCm / 2.54) * options.dpi)),
-    [options.widthCm, options.dpi],
+    [options.widthCm, options.dpi]
   );
   const outputHeightPx = useMemo(
     () => Math.round(Math.max(8, (options.heightCm / 2.54) * options.dpi)),
-    [options.heightCm, options.dpi],
+    [options.heightCm, options.dpi]
   );
 
-  const readyForPreview = Boolean(firstGroup && firstGroup.length === groupSize);
+  const readyForPreview = Boolean(
+    firstGroup && firstGroup.length === groupSize
+  );
   const readyForDownload = files.length >= groupSize && remainder === 0;
-  const previewShortfall = groupSize - (firstGroup?.length ?? 0);
+  const previewShortfall = groupSize - files.length;
   const downloadShortfall = remainder === 0 ? 0 : groupSize - remainder;
   const singleFileResult = files.length <= groupSize;
 
@@ -88,7 +115,7 @@ export function useGridBuilder(defaultOptions: ComposeOptions = DEFAULT_OPTIONS)
         if (!item.img) {
           item.img = await fileToImage(item.file);
         }
-      }),
+      })
     );
   }, []);
 
@@ -123,7 +150,13 @@ export function useGridBuilder(defaultOptions: ComposeOptions = DEFAULT_OPTIONS)
 
       if (groups.length === 1) {
         try {
-          const blob = await composeGrid(groups[0].map((item) => item.img!), options);
+          const blob = await composeGrid(
+            groups[0].map((item) => ({
+              image: item.img!,
+              rotationQuarterTurns: item.rotationQuarterTurns,
+            })),
+            options
+          );
           const extension = options.output === 'image/png' ? 'png' : 'jpg';
           triggerFileDownload(blob, `grid.${extension}`);
           setNotice({ type: 'success', text: 'Exported 1 grid image.' });
@@ -137,7 +170,13 @@ export function useGridBuilder(defaultOptions: ComposeOptions = DEFAULT_OPTIONS)
       let index = 1;
       for (const group of groups) {
         try {
-          const blob = await composeGrid(group.map((item) => item.img!), options);
+          const blob = await composeGrid(
+            group.map((item) => ({
+              image: item.img!,
+              rotationQuarterTurns: item.rotationQuarterTurns,
+            })),
+            options
+          );
           const extension = options.output === 'image/png' ? 'png' : 'jpg';
           const name = `grid-${String(index).padStart(2, '0')}.${extension}`;
           zip.file(name, blob);
@@ -150,7 +189,10 @@ export function useGridBuilder(defaultOptions: ComposeOptions = DEFAULT_OPTIONS)
 
       const zipBlob = await zip.generateAsync({ type: 'blob' });
       triggerFileDownload(zipBlob, 'photo-grids.zip');
-      setNotice({ type: 'success', text: `Exported ${files.length / groupSize} grids as a ZIP.` });
+      setNotice({
+        type: 'success',
+        text: `Exported ${files.length / groupSize} grids as a ZIP.`,
+      });
     } finally {
       setBusy(false);
     }
@@ -161,6 +203,7 @@ export function useGridBuilder(defaultOptions: ComposeOptions = DEFAULT_OPTIONS)
     addFiles,
     removeFile,
     clearFiles,
+    cycleFileRotation,
     options,
     updateOptions,
     inputValues,

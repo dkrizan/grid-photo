@@ -2,7 +2,7 @@ import { Card } from '@radix-ui/themes';
 
 import { SettingsPanel } from '../../components/Settings';
 import { UploadPanel } from '../../components/UploadPanel';
-import { useGridBuilder } from '../../hooks/useGridBuilder';
+import { useGridBuilderContext } from '../../context/GridBuilderContext';
 
 export function HomePage() {
   const {
@@ -10,6 +10,7 @@ export function HomePage() {
     addFiles,
     removeFile,
     clearFiles,
+    cycleFileRotation,
     options,
     updateOptions,
     inputValues,
@@ -26,7 +27,7 @@ export function HomePage() {
     outputHeightPx,
     firstGroup,
     download,
-  } = useGridBuilder();
+  } = useGridBuilderContext();
 
   return (
     <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.25fr)]">
@@ -41,6 +42,7 @@ export function HomePage() {
           downloadShortfall={downloadShortfall}
           onFilesSelected={addFiles}
           onRemoveFile={removeFile}
+          onRotateFile={cycleFileRotation}
           onClearAll={clearFiles}
         />
       </Card>

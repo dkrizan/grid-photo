@@ -7,9 +7,19 @@ interface PreviewCanvasProps {
   group?: ImgFile[];
   options: ComposeOptions;
   ready: boolean;
+  maxWidth?: number;
+  maxHeight?: number;
+  className?: string;
 }
 
-export function PreviewCanvas({ group, options, ready }: PreviewCanvasProps) {
+export function PreviewCanvas({
+  group,
+  options,
+  ready,
+  maxWidth = 480,
+  maxHeight = 360,
+  className,
+}: PreviewCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -22,10 +32,12 @@ export function PreviewCanvas({ group, options, ready }: PreviewCanvasProps) {
       if (!ctx) return;
 
       const expected = options.rows * options.cols;
+      const fallbackWidth = maxWidth;
+      const fallbackHeight = maxHeight;
 
       const primeCanvas = () => {
-        canvas.width = 480;
-        canvas.height = 360;
+        canvas.width = fallbackWidth;
+        canvas.height = fallbackHeight;
         const gradient = ctx.createLinearGradient(
           0,
           0,
@@ -58,15 +70,16 @@ export function PreviewCanvas({ group, options, ready }: PreviewCanvasProps) {
       if (cancelled) return;
 
       const gridCanvas = createGridCanvas(
-        group.map((item) => item.img!),
+        group.map((item) => ({
+          image: item.img!,
+          rotationQuarterTurns: item.rotationQuarterTurns,
+        })),
         options
       );
       if (cancelled) return;
 
       const srcWidth = gridCanvas.width || 1;
       const srcHeight = gridCanvas.height || 1;
-      const maxWidth = 480;
-      const maxHeight = 360;
       const scale = Math.min(maxWidth / srcWidth, maxHeight / srcHeight, 1);
       const drawWidth = Math.max(1, Math.round(srcWidth * scale));
       const drawHeight = Math.max(1, Math.round(srcHeight * scale));
@@ -86,7 +99,7 @@ export function PreviewCanvas({ group, options, ready }: PreviewCanvasProps) {
     return () => {
       cancelled = true;
     };
-  }, [group, options, ready]);
+  }, [group, options, ready, maxWidth, maxHeight]);
 
-  return <canvas ref={canvasRef} className="h-auto w-full" />;
+  return <canvas ref={canvasRef} className={className ?? 'h-auto w-full'} />;
 }

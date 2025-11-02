@@ -3,6 +3,7 @@ export interface ImgFile {
   file: File;
   previewUrl: string;
   img?: HTMLImageElement;
+  rotationQuarterTurns: number;
 }
 
 export type NoticeType = 'info' | 'warning' | 'error' | 'success';

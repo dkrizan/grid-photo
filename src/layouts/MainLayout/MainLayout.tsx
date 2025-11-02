@@ -1,6 +1,7 @@
 import { Outlet } from 'react-router-dom';
 
 import { AppHeader } from '../../components/AppHeader';
+import { GridBuilderProvider } from '../../context/GridBuilderContext';
 
 export function MainLayout() {
   return (
@@ -8,7 +9,9 @@ export function MainLayout() {
       <div className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
         <AppHeader />
         <main>
-          <Outlet />
+          <GridBuilderProvider>
+            <Outlet />
+          </GridBuilderProvider>
         </main>
         <footer className="mt-12 text-center text-xs text-slate-500">
           All processing happens locally in your browser. No uploads.
