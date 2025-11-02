@@ -116,12 +116,8 @@ export function FileGrid({ files, onRemove, onRotate }: FileGridProps) {
             aria-modal="true"
             aria-label={`Preview of ${previewItem.file.name}`}
             className="fixed inset-0 z-50 overflow-auto bg-black/80 backdrop-blur-sm"
-            onClick={closePreview}
           >
-            <div
-              className="flex min-h-full items-center justify-center px-4 py-8"
-              onClick={(event) => event.stopPropagation()}
-            >
+            <div className="flex min-h-full items-center justify-center px-4 py-8">
               <div className="relative w-full max-w-5xl">
                 <button
                   type="button"

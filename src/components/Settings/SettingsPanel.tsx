@@ -15,7 +15,7 @@ interface SettingsPanelProps {
   groupSize: number;
   outputWidthPx: number;
   outputHeightPx: number;
-  previewGroup?: ImgFile[];
+  previewGroups: ImgFile[][];
   readyForPreview: boolean;
   busy: boolean;
   readyForDownload: boolean;
@@ -33,7 +33,7 @@ export function SettingsPanel({
   groupSize,
   outputWidthPx,
   outputHeightPx,
-  previewGroup,
+  previewGroups,
   readyForPreview,
   busy,
   readyForDownload,
@@ -56,7 +56,7 @@ export function SettingsPanel({
       />
 
       <PreviewPanel
-        group={previewGroup}
+        groups={previewGroups}
         options={options}
         ready={readyForPreview}
         outputWidthPx={outputWidthPx}

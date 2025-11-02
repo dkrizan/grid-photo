@@ -87,10 +87,14 @@ export function useGridBuilder(
     () => files.length % groupSize,
     [files.length, groupSize]
   );
-  const firstGroup = useMemo<ImgFile[] | undefined>(
-    () => (files.length >= groupSize ? files.slice(0, groupSize) : undefined),
-    [files, groupSize]
-  );
+  const previewGroups = useMemo<ImgFile[][]>(() => {
+    if (files.length < groupSize) return [];
+    const groups: ImgFile[][] = [];
+    for (let index = 0; index + groupSize <= files.length; index += groupSize) {
+      groups.push(files.slice(index, index + groupSize));
+    }
+    return groups;
+  }, [files, groupSize]);
 
   const outputWidthPx = useMemo(
     () => Math.round(Math.max(8, (options.widthCm / 2.54) * options.dpi)),
@@ -101,11 +105,9 @@ export function useGridBuilder(
     [options.heightCm, options.dpi]
   );
 
-  const readyForPreview = Boolean(
-    firstGroup && firstGroup.length === groupSize
-  );
+  const readyForPreview = previewGroups.length > 0;
   const readyForDownload = files.length >= groupSize && remainder === 0;
-  const previewShortfall = groupSize - files.length;
+  const previewShortfall = Math.max(0, groupSize - files.length);
   const downloadShortfall = remainder === 0 ? 0 : groupSize - remainder;
   const singleFileResult = files.length <= groupSize;
 
@@ -219,7 +221,7 @@ export function useGridBuilder(
     singleFileResult,
     outputWidthPx,
     outputHeightPx,
-    firstGroup,
+    previewGroups,
     download,
   };
 }

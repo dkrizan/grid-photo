@@ -25,7 +25,7 @@ export function HomePage() {
     singleFileResult,
     outputWidthPx,
     outputHeightPx,
-    firstGroup,
+    previewGroups,
     download,
   } = useGridBuilderContext();
 
@@ -55,7 +55,7 @@ export function HomePage() {
           groupSize={groupSize}
           outputWidthPx={outputWidthPx}
           outputHeightPx={outputHeightPx}
-          previewGroup={firstGroup}
+          previewGroups={previewGroups}
           readyForPreview={readyForPreview}
           busy={busy}
           readyForDownload={readyForDownload}
