@@ -19,38 +19,42 @@ export function AppHeader() {
   return (
     <header className="mb-8 space-y-6">
       <div className="flex flex-col gap-6">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <Link to="/" className="flex items-center gap-3">
-            <img
-              src="/logo-dark.svg"
-              alt="GridPhoto"
-              className="h-12 sm:h-14"
-            />
-          </Link>
-          <nav className="flex flex-1 flex-wrap justify-end gap-2">
-            {navItems.map((item) => (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                className={({ isActive }) =>
-                  `${linkBaseClass} ${
-                    isActive ? linkActiveClass : 'text-slate-300'
-                  }`
-                }
-              >
-                {item.label}
-              </NavLink>
-            ))}
-          </nav>
-          <a
-            href="https://github.com/dkrizan/grid-photo"
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-700 text-slate-300 transition hover:border-violet-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-violet-500/70 focus:ring-offset-2 focus:ring-offset-slate-950"
-            aria-label="View GridPhoto on GitHub"
-          >
-            <GitHubLogoIcon className="h-5 w-5" />
-          </a>
+        <div className="flex flex-wrap justify-between gap-4">
+          <div className="flex sm:justify-between flex-1 sm:items-center flex-col sm:flex-row gap-y-6">
+            <Link to="/" className="flex items-center gap-3">
+              <img
+                src="/logo-dark.svg"
+                alt="GridPhoto"
+                className="h-6 sm:h-10"
+              />
+            </Link>
+            <nav className="flex flex-1 flex-wrap md:justify-end gap-2 h-min">
+              {navItems.map((item) => (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  className={({ isActive }) =>
+                    `${linkBaseClass} ${
+                      isActive ? linkActiveClass : 'text-slate-300'
+                    }`
+                  }
+                >
+                  {item.label}
+                </NavLink>
+              ))}
+            </nav>
+          </div>
+          <div className="flex md:items-center">
+            <a
+              href="https://github.com/dkrizan/grid-photo"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-700 text-slate-300 transition hover:border-violet-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-violet-500/70 focus:ring-offset-2 focus:ring-offset-slate-950"
+              aria-label="View GridPhoto on GitHub"
+            >
+              <GitHubLogoIcon className="h-5 w-5" />
+            </a>
+          </div>
         </div>
         <div className="max-w-2xl space-y-4">
           {isLanding ? (
