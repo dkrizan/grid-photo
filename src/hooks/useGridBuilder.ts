@@ -7,6 +7,7 @@ import {
   createPreviewUrl,
   describeError,
   fileToImage,
+  isSupportedImageFile,
   revokePreviewUrls,
   triggerFileDownload,
 } from '../utils';
@@ -25,20 +26,29 @@ export function useGridBuilder(
   const filesRef = useRef<ImgFile[]>([]);
 
   const addFiles = useCallback((list: FileList | File[]) => {
-    const imgs = Array.from(list).filter((file) =>
-      file.type.startsWith('image/')
-    );
+    const imgs = Array.from(list).filter((file) => isSupportedImageFile(file));
     if (!imgs.length) return;
-    setFiles((prev) => [
-      ...prev,
-      ...imgs.map((file) => ({
-        id: `${file.name}-${file.lastModified}-${Math.random().toString(36).slice(2, 8)}`,
-        file,
-        previewUrl: createPreviewUrl(file),
-        rotationQuarterTurns: 0,
-      })),
-    ]);
-    setNotice(null);
+
+    void (async () => {
+      try {
+        const prepared = await Promise.all(
+          imgs.map(async (file) => ({
+            id: `${file.name}-${file.lastModified}-${Math.random().toString(36).slice(2, 8)}`,
+            file,
+            previewUrl: await createPreviewUrl(file),
+            rotationQuarterTurns: 0,
+          }))
+        );
+        setFiles((prev) => [...prev, ...prepared]);
+        setNotice(null);
+      } catch (error) {
+        console.error(error);
+        setNotice({
+          type: 'error',
+          text: 'Some files could not be prepared. Please try again.',
+        });
+      }
+    })();
   }, []);
 
   const removeFile = useCallback((id: string) => {
